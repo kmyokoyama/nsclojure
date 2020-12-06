@@ -70,7 +70,8 @@ truthy, quanto falsey. Veja o exemplo __errado__ a seguir:
 O que aconteceu? Bem `if` espera três expressões, mas foram passadas cinco expressões
 (uma condição, duas expressões que esperávamos executar o caso verdadeiro, e duas
 expressões para o caso falso). De fato, isso não funciona. Como executamos múltiplas
-expressões em cada caso? Uma solução é usar o `do`.
+expressões em cada caso? Uma solução é usar o `do` que será visto em
+[Estrutura do código](../estrutura-do-codigo.md#do).
 
 Veja o exemplo corrigido a seguir:
 
@@ -88,17 +89,6 @@ Veja o exemplo corrigido a seguir:
 ;;=> nil
 ```
 
-O `do` é uma forma especial que aceita um número qualquer de expressões e
-as executa em ordem. O valor final da expressão `do` é o valor da última expressão
-que ele avaliou:
-
-```clojure
-(do (+ 10 1)
-    (* 2 5)
-    (- 3 1))
-;;=> 2
-```
-
 Não existe `else` em Clojure. Mas isso não é um problema já que podemos aninhar
 expressões `if`:
 
@@ -111,6 +101,18 @@ expressões `if`:
     (println "x is 2")
     (println "I don't know what x is")))
 ;;# "x is 2"
+;;=> nil
+```
+
+Vale notar que somente a expressão correspondente ao resultado da condição
+é avaliada. A outra expressão não é avaliada e não consome nenhum tempo
+de execução:
+
+```clojure
+(if (zero? (- 1 1))
+    (println "1 minus 1 is zero")
+    (some-really-costly-database-requisition!))
+;;# "1 minus 1 is zero"
 ;;=> nil
 ```
 
@@ -404,7 +406,7 @@ lançando uma exceção:
       fat
       (do
         (recur (* fat x) (dec x))
-        (println "fat =" fat "x =" x))))
+        (println "fat =" fat " x =" x))))
 ;;! Syntax error (UnsupportedOperationException) compiling recur at (/tmp/form-init9742472599147237557.clj:6:7).
 ;;! Can only recur from tail position
 ```

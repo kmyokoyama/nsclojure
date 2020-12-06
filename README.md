@@ -41,7 +41,7 @@ Exemplos:
 1. Introdução
 2. Apresentando Clojure
 3. [Tipos de dados](doc/tipos-de-dados.md)
-4. Controle de fluxo
+4. [Controle de fluxo](doc/controle-de-fluxo.md)
 5. Estrutura do código
 6. Funções
 7. Estrutudas de dados

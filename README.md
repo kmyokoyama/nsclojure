@@ -8,7 +8,7 @@ mas é uma tarefa um pouco mais complicada encontrar em português. Apesar de j�
 existirem ótimos conteúdos no nosso idioma, essa é mais uma contribuição para
 oferecer uma nova alternativa.
 
-Existe uma ressalva porém. Como é possível notar já no Conteúdo abaixo, não se pode
+Existe uma ressalva porém. Como é possível notar já no [Conteúdo](#conteúdo) abaixo, não se pode
 dizer que o material é 100% em português. Eu decidi não traduzir termos consolidados
 em inglês, como `map`, `vector`, e `multimethods`, e _todo código_. O motivo para isso
 é simples - é muito mais fácil realizar buscas e ter sucesso em inglês do que em qualquer
@@ -20,7 +20,7 @@ que isso se torne um problema no entendimento deste projeto.
 
 1. Introdução
 2. Apresentando Clojure
-3. Tipos de dados
+3. [Tipos de dados](doc/tipos-de-dados.md)
 4. Controle de fluxo
 5. Estrutura do código
 6. Funções

@@ -71,7 +71,7 @@ O que aconteceu? Bem `if` espera três expressões, mas foram passadas cinco exp
 (uma condição, duas expressões que esperávamos executar o caso verdadeiro, e duas
 expressões para o caso falso). De fato, isso não funciona. Como executamos múltiplas
 expressões em cada caso? Uma solução é usar o `do` que será visto em
-[Estrutura do código](doc/05-estrutura-do-codigo.md#do).
+[Estrutura do código](05-estrutura-do-codigo.md#do).
 
 Veja o exemplo corrigido a seguir:
 

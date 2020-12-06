@@ -188,8 +188,8 @@ um número. Para resguardar desses casos, pode-se utilizar a função predicado 
 que retorna `true` se seu argumento for um número, e `false` caso contrário.
 
 ```clojure
-(== 1N "one") ;;=> Execution error (ClassCastException) at nsclojure.core/eval1703 (form-init9302101881305719260.clj:1).
-             ;;   java.lang.String cannot be cast to java.lang.Number
+(== 1N "one") ;;! Execution error (ClassCastException) at nsclojure.core/eval1703 (form-init9302101881305719260.clj:1).
+              ;;! java.lang.String cannot be cast to java.lang.Number
 
 (number? 1N) ;;=> true
 (number? "one") ;;=> false
@@ -272,7 +272,7 @@ a função `ns-name` para exibir seu nome, e a função `in-ns` para criar um no
 game ;;=> nsclojure.core/chess
 
 (in-ns 'new-namespace)
-(clojure.core/refer-clojure) ;; Para ter acesso novamente ao ns-name.
+(clojure.core/refer-clojure) ;; To use ns-name.
 (ns-name *ns*) ;;=> new-namespace
 nsclojure.core/game ;;=> :nsclojure.core/chess
 ```

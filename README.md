@@ -16,6 +16,26 @@ outro idioma. Isso também facilta a comunicação com outros desenvolvedores,
 a assimilação de novos conteúdos no futuro, e buscar ajuda em fóruns online. Não acredito
 que isso se torne um problema no entendimento deste projeto.
 
+## Convenções
+
+As seguintes convenções são utilizadas:
+
+1. `;;=>` indica o retorno da avaliação de uma expressão.
+2. `;;#` indica uma saída no `stdout`.
+3. `;;!` indica a ocorrência de uma exceção.
+
+Exemplos:
+
+```clojure
+(println "Hi there!")
+;;# "Hi there!"
+;;=> nil
+
+(println (/ 1 0))
+;;! Execution error (ArithmeticException) at nsclojure.core/eval1657 (form-init9742472599147237557.clj:1).
+;;! Divide by zero
+```
+
 ## Conteúdo
 
 1. Introdução

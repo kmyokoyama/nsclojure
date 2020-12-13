@@ -6,7 +6,7 @@ em português sobre Clojure.
 É muito fácil encontrar bons materiais sobre a linguagem e bibliotecas em inglês,
 mas é uma tarefa um pouco mais complicada encontrar em português. Apesar de já
 existirem ótimos conteúdos no nosso idioma, essa é mais uma contribuição para
-oferecer uma nova alternativa.
+oferecer uma nova alternativa livre e gratuita.
 
 Existe uma ressalva porém. Como é possível notar já no [Conteúdo](#conteúdo) abaixo, não se pode
 dizer que o material é 100% em português. Eu decidi não traduzir termos consolidados
@@ -39,7 +39,7 @@ Exemplos:
 ## Conteúdo
 
 1. Introdução
-2. Apresentando Clojure
+2. [Apresentando Clojure](doc/02-apresentando-clojure.md)
 3. [Tipos de dados](doc/03-tipos-de-dados.md)
 4. [Controle de fluxo](doc/04-controle-de-fluxo.md)
 5. [Estrutura do código](doc/05-estrutura-do-codigo.md)

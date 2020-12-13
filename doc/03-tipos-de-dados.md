@@ -101,6 +101,18 @@ de precisão, ou em inteiros do tipo `BigInt`, quando possível:
 
 ### Operações com tipos numéricos
 
+A primeira coisa a notar é que não existe o conceito de "operador aritmético" em
+Clojure. Ao contrário de muitas outras linguagens, as operações aritméticas são
+realizadas por funções regulares. Isso significa que `+`, `-`, `*` e `/` são
+funções como quaisquer outras. Melhor que isso, elas são variádicas (aceitam
+um número variável de argumentos):
+
+```clojure
+(+ 1 2 3 4 5) ;;=> 15
+
+(* 1 2 3 4 5) ;;=> 120
+```
+
 O Clojure permite que tipos numéricos diferentes sejam misturados em operações
 matemáticas. O resultado será do tipo numérico mais abrangente _capaz de representar
 corretamente o resultado_. Isso significa que alguns tipos prevalevem sobre outros

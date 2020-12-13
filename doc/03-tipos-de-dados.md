@@ -151,6 +151,8 @@ IEEE-754 (base da sua implementação), que o `BigDecimal` não saberia represen
 Em algumas linguagens, comparação pode ser um problema sério (estou olhando para você JavaScript).
 Clojure provê as ferramentas que você precisa de forma consistente, sem surpresas.
 
+### `identical?`
+
 A primeira forma de comparação é com a função `identical?`, e vale para qualquer tipo
 de dados, não é especĩfica de tipos numéricos. Essa função compara as referências dos
 objetos em si, e não é o ideal para a maioria dos casos (a não ser que você queira...
@@ -164,6 +166,8 @@ comparar referências de objetos).
 ```
 
 No primeiro exemplo, a comparação com `identical?` retorna `false` mesmo com valores literais.
+
+### `=`
 
 A segunda forma de comparação é com a função `=`, também não específica de apenas tipos
 numéricos. Essa função compara corretamente valores do mesmo "tipo matemático", i.e., inteiros
@@ -185,6 +189,8 @@ Mas falha ao comparar "tipos matemáticos" diferentes:
 No último exemplo, a comparação absurda entre um número e uma string retorna `false`.
 Em outras palavras, é seguro utilizar `=` entre tipos de dados totalmente diferentes,
 caso onde o resultado será `false`.
+
+### `==`
 
 Para comparações numéricos puras, independente do tipo concreto do dado, existe a
 terceira forma de comparação, a função `==`. Essa função é especĩfica de tipos numéricos

@@ -16,6 +16,27 @@ outro idioma. Isso também facilta a comunicação com outros desenvolvedores,
 a assimilação de novos conteúdos no futuro, e buscar ajuda em fóruns online. Não acredito
 que isso se torne um problema no entendimento deste projeto.
 
+## Objetivo
+
+O objetivo deste material é ser um curso rápido sobre Clojure. Serão abordados
+os principais tópicos da linguagem, funcionalidades e boas práticas, atendo-se
+ao essencial para se desenvolver na linguagem.
+
+Este projeto é colaborativo e provavelmente nunca estará terminado. Sinta-se
+livre para propor melhorias, ideias e novas sugestões.
+
+## Público-alvo
+
+Este material destina-se a qualquer um que deseja aprender Clojure.
+
+Pessoas que já desenvolvem certamente terão uma facilidade maior em seguir o conteúdo,
+já que alguns passos como instalação do ambiente, configuração de IDE e outras tarefas
+cotidianas para um dev não serão apresentadas.
+
+O material também pode não trazer grandes novidades para desenvolvedores Clojure
+experientes, mas eu acredito que sempre há algo novo para se aprender. Por si só,
+este material também não é indicado como primeiro contato com programação.
+
 ## Convenções
 
 As seguintes convenções são utilizadas:
@@ -38,25 +59,24 @@ Exemplos:
 
 ## Conteúdo
 
-1. Introdução
-2. [Apresentando Clojure](doc/02-apresentando-clojure.md)
-3. [Tipos de dados](doc/03-tipos-de-dados.md)
-4. [Controle de fluxo](doc/04-controle-de-fluxo.md)
-5. [Estrutura do código](doc/05-estrutura-do-codigo.md)
-6. Funções
-7. Estrutudas de dados
-8. Vectors e lists
-9. Maps
-10. Sequences
-11. Records
-12. Multimethods
-13. Protocols
-14. Namespaces
-15. Estado e concorrência
-16. Java interop
-17. core.async
-18. Macros
-19. Pensando funcional
+1. [Apresentando Clojure](doc/01-apresentando-clojure.md)
+2. [Tipos de dados](doc/02-tipos-de-dados.md)
+3. [Controle de fluxo](doc/03-controle-de-fluxo.md)
+4. [Estrutura do código](doc/04-estrutura-do-codigo.md)
+5. Funções
+6. Estruturas de dados
+7. Vectors e lists
+8. Maps
+09. Sequences
+10. Records
+11. Multimethods
+12. Protocols
+13. Namespaces
+14. Estado e concorrência
+15. Java interop
+16. core.async
+17. Macros
+18. Pensando funcional
 
 ## License
 

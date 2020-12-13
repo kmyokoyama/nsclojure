@@ -19,8 +19,8 @@ quando necessário.
 
 Clojure também abraça fortemente o paradigma funcional, enfatizando vários dos seus
 melhores aspectos como imutabilidade (através de estruturas de dados persistentes),
-funções de primeira classe, funções de ordem superior, funções puras, laziness,
-recursão, além do filosofia
+funções de primeira classe, funções de ordem superior, funções puras, transparência
+referencial, laziness, recursão, além do filosofia
 
 > "_It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures._"  
 > — Alan Perlis  
@@ -36,7 +36,7 @@ tempo de desenvolvimento e trazem mais segurança.
 
 Todas essas caraterísticas criam um excelente cenário para explorar multithreading.
 E é exatamente isso que Clojure faz. A linguagem possui bom suporte à programação
-concorrente e assíncrona e ao modelo CSP (Communicating Sequentiap Processes).
+concorrente e assíncrona e ao modelo CSP (Communicating Sequential Processes).
 
 ## Não tenha medo dos parênteses
 
@@ -56,15 +56,16 @@ Uma s-expression pode ser um _atom_, ou seja, um literal ou um símbolo:
 [1 2 3 4]
 {:a 1 :b 2}
 ```
-ou uma _list_
+ou uma _list_, ou seja, uma s-expression não-atômica
 
 ```clojure
 (f arg1 arg2 arg3 ,,,)
 ```
 
-Quando uma list existe para ser avaliada, a chamamos de _form_.
+Quando uma s-expression existe para ser avaliada, a chamamos de _form_.
+__Toda expressão avaliada tem um valor como resultado__.
 
-O primeiro elemento de uma form deve ser um atom de um dos três tipos:
+O primeiro elemento de uma form deve resolver para um atom de um dos três tipos:
 
 1. Forma especial (_special form_)
 2. Macro

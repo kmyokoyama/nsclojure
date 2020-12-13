@@ -130,6 +130,10 @@ Comentários em Clojure são marcados por `;`. Tudo que vier na mesma linha apó
 `;` é comentário e é ignorado pelo compilador. Uma prática bastante comum é
 usar dois (`;;`), como feito no exemplo, para enfatizar a presença do comentário.
 
+Além disso, o caractere de vírgula é tratado exatamente igual a um espaço
+em branco. Isso significa que `[,,,]` e `[   ]` são exatamente iguais
+para o compilador do Clojure.
+
 Assim como em outras linguagens, algumas funções retornam valores booleanos
 (verdadeiro ou falso) e portanto são chamadas funções predicado. Funções predicado
 em Clojure são convencionalmente sufixadas com `?`, como a função `active-user?`

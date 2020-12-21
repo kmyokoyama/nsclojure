@@ -14,6 +14,166 @@ estruturas de iteração cobrem o restante das necessidades.
 > Toda expressão em Clojure retorna um valor (ainda que este seja `nil`)! Isso é particularmente verdade
 > para todas expressões de controle de fluxo que serão mostradas abaixo.
 
+## Operadores lógicos
+
+Antes de entrar no assunto de controle de fluxo, vale falar sobre operadores lógicos.
+
+Qualquer função (ou macro) que tem como resultado um valor truthy ou falsey, pode
+ser usada em contextos condicionais (como no `if` que veremos a seguir). A principal
+finalidade dos operadores lógicos é criar condições lógicas compostas.
+
+### `and`
+
+O operador lógico `and` é uma macro que aceita um número variável de argumentos
+e os avalia da esquerda para a direita. Ele retorna o primeiro valor falsey
+encontrado, se houver, ou o valor do último argumento, se todos avaliarem truthy.
+Veja alguns exemplos:
+
+```clojure
+(and 0 [] 1 2) ;;=> 2
+(and 0 [] (seq []) 10) ;;=> nil
+(and 1 2 (= 1 2) (seq [])) ;;=> false
+(and) ;;=> true
+``` 
+
+No primeiro exemplo, todos valores são logicamente truthy, e portanto `and`
+retorna o último valor avaliado, `2`. No segundo exemplo, `(seq [])` é `nil`, então
+`nil` é retornado. No terceiro exemplo, o primeiro valor falsey avaliado é a
+comparação `(= 1 2)` que retorna `false`, sendo este então o valor retornado por `and`.
+Por fim, `(and)` avaliado sem argumentos retorna, por default, `true`.
+
+### `or`
+
+O operador lógico `or` também é uma macro que aceita um número variável de argumentos
+e os avalia da esquerda para a direita. Ele retorna o primeiro valor truthy encontrado,
+se houver, ou o valor do último argumento, se todos avaliarem falsey. Veja alguns exemplos:
+
+```clojure
+(or 0 1 (= 1 1) 2) ;;=> 0
+(or false nil 1 2) ;;=> 1
+(or (seq []) (empty? [])) ;;=> true
+(or) ;;=> nil
+```
+
+No primeiro exemplo, o primeiro argumento já é o primeiro valor truthy, `0`, e
+portanto é o valor retorno pelo `or`. No segundo exemplo, o primeiro valor encontrado
+avaliado como truthy é `1`, que é o valor retornado. No terceiro exemplo, `(seq [])`
+avalia falsey (`nil`), mas `(empty? [])` avalia `true`, que é então retornado.
+Por fim, `(or)` avaliado sem argumentos retorna, por default, `nil`.
+
+### `not`
+
+A macro `not` recebe apenas um argumento e retorna a sua negação lógica.
+Exemplos:
+
+```clojure
+(not false) ;;=> true
+(not nil) ;;=> true
+(not true) ;;=> false
+(not 0) ;;=> false
+(not []) ;;=> false
+(not not) ;;=> false
+```
+
+Para entender os exemplos, basta lembrar que apenas `false` e `nil` são considerados
+falsey (logicamente falsos), enquanto _qualquer_ outro valor é considerado truthy
+(logicamente verdadeiro).
+
+### `complement`
+
+A função `complement` não é um operador lógico e é um pouco mais complexa, mas
+vale falar dela logo nesta seção. Essa função recebe outra função, `f`, e retorna
+uma nova função que recebe os mesmos parâmetros que `f` e tem exatamente o mesmo
+comportamento que `f`, mas retorna seu valor lógico negado. Veja alguns exemplos:
+
+```clojure
+(def not-zero? (complement zero?))
+(not-zero? 1) ;;=> true
+(not-zero? 0) ;;=> false
+
+(defn print-empty?
+    [coll]
+    (if (seq coll)
+      (do (println "It is not empty")
+          false)
+      (do (println "It is empty")
+          true)))
+
+(print-empty? [1 2])
+;;# It is not empty
+;;=> false
+
+(print-empty? [])
+;;# It is empty
+;;=> true
+
+(def not-print-empty? (complement print-empty?))
+
+(not-print-empty? [1 2])
+;;# It is not empty
+;; true
+
+(not-print-empty? [])
+;;# It is empty
+;; false
+```
+
+Na primeira parte, simplesmente negamos o resultado da função predicado `zero?`.
+A função `not-zero?` retorna `true` se o valor não for zero, ou `false`, caso
+contrário.
+
+Na segunda parte, as coisas complicam um pouco (e ficam até confusas). A função
+`print-empty?` exibe `"It is not empty"` e retorna `false` se seu argumento não
+está vazio, e exibe `"It is empty"` e retorna `true` caso seu argumento esteja vazio.
+
+A função `not-print-empty?` tem exatamente o mesmo comportamento da `print-empty?`,
+incluindo mesmos prints, mas seu resultado é negado logicamente. Repare como isso
+pode gerar uma certa confusão (e aparente inconsistência). De qualquer forma, a
+função `complement` tem suas aplicações e vale a pena conhecê-la.
+
+### `<`, `<=`, `=`, `>=`, `>`
+
+Os comparadores de ordem também são bastante utilizados em contextos de condicionais.
+
+A única novidade aqui em relação a outras linguagens é que eles são variádicos, e
+isso traz a vantagem de poder comparar inúmeros valores de uma só vez:
+
+```clojure
+(< 1 2 3 4) ;;=> true
+(< 1 2 4 3) ;;=> false
+```
+
+(Você pode pular as próximas sentenças, se quiser). Há uma forma elegante em Clojure
+de verificar se uma dada coleção está ordenada (por exemplo, em ordem crescente)
+usando `apply` e um comparador:
+
+```clojure
+(def ordered-coll [1 2 3 4])
+(def not-ordered-coll [1 2 4 3])
+
+(apply < ordered-col) ;;=> true
+(apply < not-ordered-col) ;;=> false
+```
+
+A função `apply` simplesmente invoca a função passada como seu primeiro argumento
+(no caso dos exemplos `<`) passando cada um dos elementos da coleção como argumentos
+individuais dessa função. Isso é melhor explicado com um exemplo simples:
+
+```clojure
+(defn sum
+  [x y]
+  (+ x y))
+
+(apply sum [1 2]) ;;=> 3
+(sum 1 2) ;;=> 3
+```
+
+A função `sum` soma seus dois argumentos. A função `apply` "explode" o vector `[1 2]`
+e passa `1` e `2` como argumentos individuais para `sum`. As duas invocações
+do exemplo são equivalentes neste caso.
+
+Agora podemos ver as estruturas de controle de fluxo.
+
 ## `if` e `if-not`
 
 O controle de fluxo mais básico é feito com a forma especial (_special form_) `if`
@@ -84,8 +244,8 @@ Veja o exemplo corrigido a seguir:
   (do ;; Falsey expressions.
     (println "It would be bad, if...")
     (println "it was empty")))
-;;# "Oh yeah, it is..."
-;;# "not empty"
+;;# Oh yeah, it is...
+;;# not empty
 ;;=> nil
 ```
 
@@ -100,7 +260,7 @@ expressões `if`:
   (if (= x 2)
     (println "x is 2")
     (println "I don't know what x is")))
-;;# "x is 2"
+;;# x is 2
 ;;=> nil
 ```
 
@@ -112,7 +272,7 @@ de execução:
 (if (zero? (- 1 1))
     (println "1 minus 1 is zero")
     (some-really-costly-database-requisition!))
-;;# "1 minus 1 is zero"
+;;# 1 minus 1 is zero
 ;;=> nil
 ```
 

@@ -283,7 +283,7 @@ clojure.core/+
 nil
 ```
 
-Note como o output indica qual é o tipo da form. Se for uma special form ou macro,
+Note como o output indica qual é o tipo da form. Se for uma forma especial ou macro,
 isso estará bem explícito, como no caso do `if` e do `when`, respectivamente. Se
 nada for indicado, então trata-se de uma função regular, como no caso do `+`.
 

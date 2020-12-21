@@ -49,7 +49,7 @@ Exemplos:
 
 ```clojure
 (println "Hi there!")
-;;# "Hi there!"
+;;# Hi there!
 ;;=> nil
 
 (println (/ 1 0))
@@ -63,7 +63,7 @@ Exemplos:
 2. [Tipos de dados](doc/02-tipos-de-dados.md)
 3. [Controle de fluxo](doc/03-controle-de-fluxo.md)
 4. [Estrutura do código](doc/04-estrutura-do-codigo.md)
-5. Funções
+5. [Funções](doc/05-funcoes.md)
 6. Estruturas de dados
 7. Vectors e lists
 8. Maps

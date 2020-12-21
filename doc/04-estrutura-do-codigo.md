@@ -28,7 +28,7 @@ O `let` é uma forma especial que permite criar symbols locais. Veja um exemplo:
       y (* 2 x)]
     (println "x =" x " y =" y)
     (+ x y))
-;;# "x = 1 y = 2"
+;;# x = 1 y = 2
 ;;=> 3
 ```
 

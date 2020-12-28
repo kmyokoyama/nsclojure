@@ -1,6 +1,6 @@
 # Funções
 
-Clojure ẽ um Lisp com um forte gosto funcional. Como deve ser óbvio, funções
+Clojure é um Lisp com um forte gosto funcional. Como deve ser óbvio, funções
 desempenham um papel central no paradigma funcional.
 
 ## Invocando funções
@@ -9,7 +9,7 @@ Invocar uma função em Clojure é tão simples quanto colocá-la entre parênte
 junto com seus argumentos. A função invocada deve estar sempre na posição inicial
 (_header position_) de uma form.
 
-Por exemplo, considere a função `+:
+Por exemplo, considere a função `+`:
 
 ```clojure
 (+ 1 2 3 -5 4.5) ;;=> 5.5
@@ -46,7 +46,7 @@ Clojure já vêm com centenas de funções muito úteis, mas mais cedo do que ta
 é preciso criar as suas próprias funções.
 
 Existem algumas formas de fazer isso, e a mais comum delas é com a macro `defn`.
-Essa macro tem a seguinte forma:
+Essa macro tem a seguinte estrutura:
 
 ```clojure
 (defn <fn-name>
@@ -250,14 +250,14 @@ simples, com apenas uma form e poucos argumentos (idealmente um ou dois).
 
 ## Funções privadas
 
-Ainda não abordamos namespaces, mas vale apresentar um assunto que serã repetido
+Ainda não abordamos namespaces, mas vale apresentar um assunto que será repetido
 quando abordarmos. Esse assunto são as funções privadas do namespace.
 
 Brevemente, um namespace é uma forma de criar um agrupamento lógico de nomes
 e evitar colisões de nomes. Uma aplicação normalmente possui algumas dezenas de namespaces,
 que separam de forma lógica partes de sua implementação (funções, macros, constantes etc).
 
-Como em outras linguagens, Clojure provê um jeito de tornar alguns nomes privadas,
+Como em outras linguagens, Clojure provê um jeito de tornar alguns nomes privados,
 acessíveis apenas dentro do namespace onde foram definidos.
 
 Uma forma geral de tornar privado um nome é utilizando metadata como no exemplo
@@ -275,7 +275,7 @@ No exemplo acima, ambos `some-private-fn` e `some-constant` só são acessíveis
 por seus nomes dentro do namespace onde foram definidos.
 
 Essa anotação estranha `^:private` (ou de forma mais verbosa `^{:private true}`)
-é uma forma de adicionar metadados a Var (veremos exatamente o que é um Var mais a frente).
+é uma forma de adicionar metadados à Var (veremos exatamente o que é uma Var mais a frente).
 Podemos até verificar que de fato o metadata foi criado usando a função
 `meta` e passando a Var (com `#'`):
 
@@ -308,7 +308,8 @@ Por exemplo, não existe um `def-` para criar constantes privadas,
 sendo necessário utilizar `^:private`.
 
 Quando falarmos de namespaces, veremos uma forma de contornar o modo privado
-e acessar nomes privados de outros namespaces. Isso pode ser útil para testes.
+e acessar nomes privados de outros namespaces.
+Isso pode ser útil para escrever testes.
 
 ## Multiaridade (multiarity)
 
@@ -352,7 +353,7 @@ Essa feature é útil para emular valores default:
 ```
 
 Note como no caso onde a função recebe apenas um parâmetro, a função invoca a
-ela mesma, passando um valor default (`"Hi"`) como segundo argumento. Essa técnica
+ela mesma, passando um valor default, `"Hi"`, como segundo argumento. Essa técnica
 é bastante comum e útil.
 
 ## Funções variádicas
@@ -429,10 +430,12 @@ de closures e escopo léxico do Clojure (não vamos entrar em detalhes):
     (fn [x] (+ x n)))
 
 (def inc-by-2 (inc-by 2))
+
 (inc-by-2 5) ;;=> 7
 (inc-by-2 8) ;;=> 10
 
 (def inc-by-3 (inc-by 3))
+
 (inc-by-3 5) ;;=> 8
 ```
 
@@ -555,12 +558,12 @@ de dois parâmetros e uma collection. Na segunda, ela recebe `f`, um valor inici
     ```
     
 2. `reduce` recebe `f`, `val` e `coll`:  
-    1.1. Se `coll` é vazio, `reduce` retorna `val`:
+    2.1. Se `coll` é vazio, `reduce` retorna `val`:
     ```clojure
     (reduce + 10 []) ;;=> 10
     ```
    
-    1.2. Se `coll` é não vazio, `reduce` invoca `f` com `val` e o primeiro elemento
+    2.2. Se `coll` é não vazio, `reduce` invoca `f` com `val` e o primeiro elemento
     de `coll`, depois o resultado dessa invocação e o segundo elemento, e assim por diante:
     ```clojure
     (reduce + 100 [10 20 30 40 50]) ;;=> 250
@@ -578,3 +581,237 @@ do `reduce` quando `coll` tem elementos suficiente (casos 1.3 e 2.2).
 Muitos problemas podem ser resolvidos de forma extremamente elegante com `reduce`.
 Quem estiver interessado, vale a pena estudar essa função do ponto de vista
 da linguagem Haskell e suas funções `foldr` e `foldl` com estrutura recursiva.
+
+## `apply`, `partial`, `comp` e `memoize`
+
+Em Clojure, existem várias funções de ordem superior que facilitam trabalhar com
+outras funções. Três das mais comuns são `apply`, `partial` e `comp`. A função
+`memoize` vai ser útil para explicar um conceito mais adiante.
+
+### `apply`
+
+A função `apply` é útil para passar os elementos de uma collection como
+argumentos individuais para uma função. Ela recebe a função a ser invocada,
+argumentos para essa função (na ordem em que devem ser passados) e uma collection
+de mais argumentos. Por exemplo, a função `+` aceita um número qualquer de
+argumentos numéricos a serem somados, mas não aceita uma collection de números:
+
+```clojure
+(+ 10 20 30 40) ;;=> 100
+
+(+ [10 20 30 40])
+;;! Execution error (ClassCastException) at java.lang.Class/cast (Class.java:3369).
+;;! Cannot cast clojure.lang.PersistentVector to java.lang.Number
+```
+
+Podemos usar `apply` para passar cada elemento da collection como um argumento individual
+(na mesma ordem) para a função:
+
+```clojure
+(apply + [10 20 30 40]) ;;=> 100
+
+(apply + 10 20 [30 40]) ;;=> 100
+```
+
+Uma outra aplicação útil dessa função é com `str`, que funciona como um join*:
+
+```clojure
+(apply str ["this" "is" "a" "string"]) ;;=> "thisisastring"
+```
+
+> *: Existe a função `clojure.string/join` mais especializada para isso.
+
+### `partial`
+
+Aplicar parcialmente uma função significa criar uma nova função onde alguns dos
+seus argumentos foram fixados e outros argumentos ainda podem variar. A função
+`partial` recebe uma função e os argumentos dessa função que serão fixados
+e retorna uma nova função que aceita todos os argumentos que não foram fixados:
+
+```clojure
+(defn calc
+    [op & args]
+    (apply op args))
+
+(def double (partial calc * 2))
+
+;; (calc * 2 5)
+(double 5) ;;=> 10
+
+(def increment (partial calc + 1))
+
+;; (calc + 1 10)
+(increment 10) ;;=> 11
+```
+
+No exemplo acima, a função variádica `calc` recebe uma função (`op`)
+e um número qualquer de argumentos. Usamos a função `apply` vista acima para
+passar os elementos de `args` (uma collection) como argumentos individuais para `op`.
+Definimos então duas funções, `double` e `increment`. No primeiro exemplo é feita
+uma aplicação parcial de `calc` - fixamos os dois primeiros argumentos de `calc` como `*` e `2`.
+O resultado é uma nova função, definida como `double`, que recebe os demais argumentos.
+A função `increment` segue a mesma lógica.
+
+Use `partial` sempre que se vir repetindo a mesma invocação de uma função com
+apenas alguns poucos parâmetros realmente variando. Note que `partial` faz uma
+aplicação parcial dos argumentos iniciais. Se você precisar fixar argumentos que
+não são os iniciais, você pode sempre usar funções anônimas para criar uma versão
+da função que apenas reordena os parâmetros, deixando os fixos nas posições iniciais.
+
+### `comp`
+
+Um dos temas centrais da programação funcional (e da Teoria das Categorias) é
+a composição de funções. Compor duas funções significa usar as duas funções
+em cadeia ou sequência, de forma que a saída de uma função se torne a entrada
+da outra.
+
+Em Clojure, dispomos de várias formas de encadear invocações de funções. Porém,
+quando se fala de compor funções, no sentido mais estrito, falamos da função
+`comp`. A função `comp` aceita várias funções como argumentos e retorna uma nova
+função que é a composição dessas funções (as funções são aplicadas da direita
+para a esquerda). Veja um exemplo:
+
+```clojure
+(defn hi [s] (str "Hi, " s))
+(defn ms [s] (str "Ms. " s))
+
+(def greet (comp hi ms))
+
+(greet "Mary") ;;=> "Hi, Ms. Mary"
+```
+
+No exemplo acima, `(comp hi ms)` cria uma nova função, definida como `greet`,
+que funciona exatamente como `(hi (ms "Mary"))`. Se notação matemática fosse utilizada
+nesse exemplo, teríamos que `greet = hi ∘ ms`.
+
+### `memoize`
+
+Se uma função produz exatamente sempre o mesmo resultado para a mesma entrada, de forma
+determinística e sem consultar ou alterar o estado externo à função, então podemos
+cachear seus resultados, poupando de subsequentes computações que seriam repetidas.
+
+Em Clojure, uma forma simples de alcançar isso é com a função `memoize`:
+
+```clojure
+(defn expensive
+    [n]
+    (Thread/sleep 10000) ;; The 10-seconds delay simulates a costly computation.
+    (* 2 n))
+
+;; It takes 10 seconds to return.
+(expensive 4) ;;=> 8
+
+(def memoized-expensive (memoize expensive))
+
+;; First call: it still takes 10 seconds.
+(memoized-expensive 4) ;;=> 8
+
+;; Second call: instantly!
+(memoized-expensive 4) ;;=> 8
+```
+
+O que a função `memoize` faz é manter em memória um mapa de entradas e saídas.
+Da primeira vez que uma determinada entrada é apresentada, a função executa e `memoize` salva
+o resultado no mapa. Quando a mesma entrada é apresentada depois, o mapa
+é consultado e o resultado encontrado é diretamente retornado, sem executar a função.
+Isso significa que, se a função faz algo além de retornar o seu resultado (e.g., exibir uma
+mensagem na tela), esse algo só será executado da primeira vez que uma determinada
+entrada for apresentada.
+
+## Funções puras e efeitos colaterais
+
+Os conceitos de função pura e efeito colateral são centrais em programação funcional.
+Esses são alguns daqueles conceitos que você leva pra vida,
+independentemente da linguagem que você utilize, funcional ou não.
+
+Efeito colateral é qualquer mudança de estado externa à função em questão. Exemplos
+disso são exibir mensagens na tela, fazer updates no banco de dados, enviar
+requisições ou atualizar variáveis globais.
+
+Uma função pura é uma função que:
+
+1. Seu resultado depende somente dos seus argumentos, de forma determinística.
+2. Não produz efeitos colaterais.
+
+O ponto 1 nos diz que todos os dados que a função necessita para realizar seu
+trabalho devem ser passados como argumentos para ela. Ser determinística
+significa que os mesmos argumentos produzem sempre o mesmo resultado, sem
+surpresas ou doses de aleatoriedade.
+
+Obviamente, funções puras podem ser definidas utilizando outras funções puras
+e constantes. No entanto, qualquer dado que parametrize o comportamento ou resultado
+da função pura deve ser passado como argumento.
+
+O ponto 2 descarta a possibilidade de haver efeitos colaterais na função. Uma
+função ter efeitos colaterais significa que ela não produz somente o seu retorno,
+mas também mudanças de estado fora dela, que fogem do escopo da função, que são difíceis
+de acompanhar e que trazem um certo grau de não-determinismo. Como tudo isso é
+indesejado, funções puras devem ser livres de efeitos colaterais.
+
+Portanto, uma função pura se comporta como uma função matemática: seu valor depende
+somente dos argumentos passados e ela não faz nada mais além de computar esse valor.
+
+Note que funções puras não podem depender ou invocar funções não puras. Se o fizerem,
+elas perdem o status de função pura. Isso faz bastante sentido. Se não fosse assim
+seria fácil encapsular qualquer impureza (i.e., efeitos colaterais) em outras funções
+e invocá-las na sua função pura. Isso seria como "roubar" da definição.
+
+Uma outra forma de definir sucintamente função pura é:
+
+1. Uma função pura é qualquer função que pode ser memoizada, sem perdas.
+
+Se uma função pode ser substituída por sua versão memoizada, sem nenhuma
+diferença notável, então significa que ela só depende dos seus argumentos
+(ponto 1) e que ela não produz nenhum efeito colateral (ponto 2).
+
+Mas por que função pura? Existe uma série de vantagens em trabalhar com funções
+puras. Funções puras são mais fáceis de
+
+* Pensar: como não dependem de estado externo e nem o modificam, é mais fácil
+acompanhar o que elas fazem e como elas interagem com o restante do código.
+
+* Testar: é direto e simples criar testes unitários que exercitam diversas
+combinações de entradas com as saídas esperadas, sem envolver
+um setup de teste complicado.
+
+* Compor: como o objetivo da função pura é retornar um resultado e nada mais, é mais
+fácil reaproveitá-la em mais situações, sem se preocupar com possíveis
+efeitos colaterais indesejados.
+
+* Paralelizar: como não dependem de estado externo e nem o modificam, não
+há perigo em executá-las paralelamente, nem se corre o risco de cair em
+armadilhas da programação concorrente.
+
+* Entre outros benefícios.
+
+Porém, programar é criar efeitos colaterais!
+
+De nada adianta um software que não interage com o banco de dados, nem faz
+requisições para outros servidores, nem possui UI etc. Um software assim seria
+uma caixa preta sem entradas e sem saídas, totalmente sem utilidade.
+
+O importante portanto é isolar os efeitos colaterais e restringir tais funções não puras
+preferencialmente nas bordas (de entrada e saída) do software. O objetivo deve
+ser na linha de criar o máximo possível de funções puras (e.g., ao modelar
+as regras de negócio) e empurrar as impurezas até que sejam inevitavelmente necessárias.
+
+Da próxima vez que estiver escrevendo uma função, se pergunte: _"Esta função
+é pura? Se não é, eu posso torná-la pura?"_. Todos (inclusive o seu Eu do futuro)
+agradecem.
+
+### Transparência referencial
+
+Transparência referencial é a capacidade de subsitituir uma invocação de função
+pelo seu resultado em qualquer parte do software, sem perdas. Por exemplo,
+se uma função `f` oferece transparência referencial e o valor de `(f 1)` é `2`, então
+é sempre possível substituir qualquer ocorrência de `(f 1)` no código por `2`, sem
+alteração do comportamento geral do software.
+
+Essa é uma característica desejável em funções, pois torna o código mais simples
+de analisar e testar. A boa notícia é que funções puras oferecem
+transparência referencial de graça.
+
+Transparência referencial também é um dos motivos porque utilizo a expressão
+_"valor da função"_ para me referir ao seu retorno em vez de _"retorno da função"_.
+Ainda que nem todas funções sejam puras ou ofereçam transparência referencial,
+é sempre bom pensar sobre funções em termos de valores.

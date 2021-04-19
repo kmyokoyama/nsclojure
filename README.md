@@ -59,14 +59,14 @@ Exemplos:
 
 ## Conteúdo
 
-1. [Apresentando Clojure](doc/01-apresentando-clojure.md)
-2. [Tipos de dados](doc/02-tipos-de-dados.md)
-3. [Controle de fluxo](doc/03-controle-de-fluxo.md)
-4. [Estrutura do código](doc/04-estrutura-do-codigo.md)
-5. [Funções](doc/05-funcoes.md)
-6. Estruturas de dados
-7. Vectors e lists
-8. Maps
+01. [Apresentando Clojure](doc/01-apresentando-clojure.md)
+02. [Tipos de dados](doc/02-tipos-de-dados.md)
+03. [Controle de fluxo](doc/03-controle-de-fluxo.md)
+04. [Estrutura do código](doc/04-estrutura-do-codigo.md)
+05. [Funções](doc/05-funcoes.md)
+06. Estruturas de dados
+07. Vectors e lists
+08. Maps
 09. Sequences
 10. Records
 11. Multimethods

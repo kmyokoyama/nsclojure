@@ -64,7 +64,7 @@ Exemplos:
 03. [Controle de fluxo](doc/03-controle-de-fluxo.md)
 04. [Estrutura do código](doc/04-estrutura-do-codigo.md)
 05. [Funções](doc/05-funcoes.md)
-06. Estruturas de dados
+06. [Estruturas de dados](doc/06-estruturas-de-dados.md)
 07. Vectors e lists
 08. Maps
 09. Sequences

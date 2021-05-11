@@ -65,7 +65,7 @@ Exemplos:
 04. [Estrutura do código](doc/04-estrutura-do-codigo.md)
 05. [Funções](doc/05-funcoes.md)
 06. [Estruturas de dados](doc/06-estruturas-de-dados.md)
-07. Vectors e lists
+07. [Vectors e lists](doc/07-vectors-e-lists.md)
 08. Maps
 09. Sequences
 10. Records

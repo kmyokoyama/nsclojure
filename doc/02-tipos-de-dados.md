@@ -7,8 +7,8 @@ preocupar com declaração de tipos, criando um clima de certa produtividade.
 Por outro lado, perde-se a segurança que tipos explícitos provêm, o que confere
 certa confiança no código ainda durante a compilação.
 
-Neste capítulo, iremos falar dos tipos de dados escalares como os tipos numéricos
-e strings. Em outro capítulo falaremos dos tipos compostos como maps e vectors.
+Nesta seção, iremos falar dos tipos de dados escalares como os tipos numéricos
+e strings. Em outra seção, falaremos dos tipos compostos como maps e vectors.
 
 É possível verificar o tipo de um dado com a função `type`. Por exemplo,
 

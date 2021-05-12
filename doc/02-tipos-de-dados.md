@@ -385,8 +385,8 @@ mais a fundo em [Java Interop](broken-link) como fazer isso), mas isso é um err
 Para evitar esse tipo de comportamento bizarro,
 __sempre utilize os valores `true` e `false` e nunca crie suas próprias instâncias de `Boolean`__.
 
-Se precisar utilizar uma coleção vazia como logicamente falso, pode-se usar a função
-`seq` que retorna `nil` quando a coleção está vazia, ou uma sequência quando a coleção não está vazia:
+Se precisar utilizar uma collection vazia como logicamente falso, pode-se usar a função
+`seq` que retorna `nil` quando a collection está vazia, ou uma sequência quando a collection não está vazia:
 
 ```clojure
 (seq [1 2]) ;;=> (1 2)
@@ -395,7 +395,7 @@ Se precisar utilizar uma coleção vazia como logicamente falso, pode-se usar a 
 ```
 
 Isso é mais idiomático do que usar a função predicado `empty?`, que retorna `true`
-se a coleção está vazia e `false` caso contrário:
+se a collection está vazia e `false` caso contrário:
 
 ```clojure
 (if-not (empty? []) "It is not empty" "It is empty") ;;=> "It is empty"

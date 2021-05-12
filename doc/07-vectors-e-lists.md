@@ -30,7 +30,21 @@ Em Clojure, vírgulas são interpretadas como espaços em branco pelo compilador
 [,,,] ;;=> []
 ```
 
-Vamos conhecer as principais funções relativas a vectors na ordem CRUD (Create-Read-Update-Delete).
+Vectors em Clojure são estruturas de dados adequadas para acesso na sua ponta direita, i.e., no fim do vector.
+Isso significa que operações que adicionam, removem ou acessam no final do vector possuem bom desempenho.
+Em termos de acesso  aleatório (e.g., por um índice), vectors também são bastante indicados.
+Por outro lado, adicionar ou remover no começo (ponta esquerda) não é uma tarefa muito performática. 
+
+Vamos conhecer as principais funções relativas a vectors na ordem CRUD (Create–Read–Update–Delete). 
+Para todos os exemplos a seguir, usaremos os seguintes dados:
+
+```clojure
+(def v [10 20 30])
+
+(def v-nil nil)
+
+(def v-nested [[10 20] [30 40]])
+```
 
 ### Construindo vectors
 
@@ -53,16 +67,7 @@ Não se preocupe com o `'()` por agora. Já veremos o que ele significa quando f
 
 ### Acessando vectors
 
-Temos basicamente três formas de acessar elementos em um vector. Para exemplificá-las, usaremos
-os seguintes dados:
-
-```clojure
-(def v [10 20 30])
-
-(def v-nil nil)
-
-(def v-nested [[10 20] [30 40]])
-```
+Temos basicamente três formas de acessar elementos em um vector:
 
 1. Usando o vector como uma função:
 
@@ -80,6 +85,9 @@ os seguintes dados:
 
 Como pode ver, índices começam em zero. Se tentarmos acessar um índice fora dos limites do
 vector, recebemos uma exception. Também recebemos uma exception se por acaso o vector for `nil`.
+
+Um ponto interessante é que neste caso, o vector se comporta como uma collection associativa (como um map), onde
+suas chaves são os seus índices válidos e os valores são os elementos nesses índices.
 
 2. Usando a função `nth`:
 
@@ -117,22 +125,41 @@ Também é possível acessar vectors aninhados com a função `get-in`:
 
 No exemplo acima, acessar o índice 0 do vector externo e o índice 1 do vector interno, retornando o elemento 20.
 
+Clojure possui uma função para acessar o último elemento de um vector através da função `peek`:
+
+```clojure
+(peek v) ;;=> 40
+```
+
 ### Modificando vectors
 
 Se você leu a seção anterior, provavelmente está se pergunta "Mas não é tudo imutável?".
 E a resposta é "Sim!". Tudo continua imutável. Na verdade, não estaremos modificando
 a estrutura original, mas sim criando uma nova estrutura com as modificação a partir da original.
 
-Temos algumas formas de modificar elementos em vectors. A primeira delas é com `assoc`:
+Temos algumas formas de modificar elementos em vectors. A primeira delas é com `conj`:
 
 ```clojure
-(assoc v 1 2000) ;;=> [10 2000 30 40]
+(conj v 50) ;;=> [10 20 30 40 50]
+```
+
+Quando aplicado a um vector, `conj` faz a operação de append no vector, i.e., adiciona o elemento ao final do vector.
+Também é possível adicionar múltiplos elementos de uma só vez:
+
+```clojure
+(conj v 50 60 70 80) ;;=> [10 20 30 40 50 60 70 80]
 
 v ;;=> [10 20 30 40]
 ```
 
-Note no exemplo acima como o retorno do `assoc` é um novo vetor com as modificações desejadas. No entanto, o vector
+Note no exemplo acima como o retorno do `conj` é um novo vetor com as modificações desejadas. No entanto, o vector
 original, no caso `v`, não foi alterado. Isso também vale para qualquer uma dos casos a seguir.
+
+Uma outra função bastante útil é `assoc`:
+
+```clojure
+(assoc v 1 2000) ;;=> [10 2000 30 40]
+```
 
 Também podemos usar a função `assoc-in` para modificar vectors aninhados:
 
@@ -155,9 +182,23 @@ E também existe sua versão aninhada `update-in`:
 Note que passamos uma função de um argumento como último argumento de `update` e `update-in`. Essa função
 receberá o elemento naquele determinado índice e o seu retorno será o novo elemento naquele determinado índice.
 
+Outra função útil para modificar vector é `replace`. Essa função recebe um map com as modificações a serem
+feitas como primeiro argumento e o vector como segundo argumento:
+
+```clojure
+(replace {20 2000} v) ;;=> [10 2000 30 40]
+```
+
 ### Removendo elementos
 
-Remover elementos de um vector não é uma tarefa tão usual. Talvez por isso, Clojure não tenha uma forma mais direta de realizar
+Como dito, operações que atuam sobre o final do vector são mais performáticas. A função `pop` remove um
+elemento do final do vector e retorna o vector sem este elemento:
+
+```clojure
+(pop v) ;;=> [10 20 30]
+```
+
+Remover elementos do meio de um vector não é uma tarefa tão usual. Talvez por isso, Clojure não tenha uma forma mais direta de realizar
 essa tarefa. Uma das formas mais indicadas para isso é utilizando as funções `subvec` e `concat`.
 
 A função `subvec` retorna um subvector do vector original. Essa função recebe o vector, um índice de ínicio, inclusivo,
@@ -184,3 +225,99 @@ Com `subvec` e `concat` podemos realizar a remoção de um elemento em um determ
 
 (remove-nth v 1) ;;=> [10 30]
 ```
+
+### Outras funções úteis
+
+Vale conhecer o que outras funções fazem (e não fazem) com vectors. Por exemplo, a função `count` retorna
+a quantidade de elementos em um vector:
+
+```clojure
+(count []) ;;=> 0
+
+(count v) ;;=> 4
+```
+
+Apesar de existir a função `empty?`,
+
+```clojure
+(empty? []) ;;=> true
+
+(empty? v) ;;=> false
+```
+
+a forma mais idiomática de verificar se um vector está vazio é com a função `seq`
+
+```clojure
+(seq []) ;;=> nil
+
+(seq v) ;;=> (10 20 30 40)
+```
+
+Outras duas função interessantes são `rest` e `next`. Ambas retornam o vector original com exceção do seu primeiro
+elemento:
+
+```clojure
+(rest v) ;;=> (20 30 40)
+
+(next v) ;;=> (20 30 40)
+```
+
+A grande diferença das duas está quando aplicadas a vectors (ou sequências, como veremos mais adiante) vazios
+ou `nil`:
+
+```clojure
+(rest []) ;;=> ()
+(rest nil) ;;=> ()
+
+(next []) ;;=> nil
+(next nil) ;;=> nil
+```
+
+Como vocë pode ver, quando aplicado a um vector vazio ou `nil`, `rest` sempre retornará uma sequência vazia. A
+função `next` por outro lado, retornará `nil` nesses casos. Como sequências vazias não são consideradas falsey
+em Clojure (i.e., não são logicamente falsas), usar `rest` em condições como no exemplo abaixo não é uma boa ideia.
+Nesses casos, a melhor alternativa é usar `next`:
+
+```clojure
+;; BAD!
+(if (rest [10])
+  "It has a tail!"
+  "It does not have a tail!")
+;;=> "It has a tail!"
+
+;; GOOD!
+(if (next [10])
+  "It has a tail!"
+  "It does not have a tail!")
+;;=> "It does not have a tail!"
+```
+
+Nos exemplos acima, queremos verificar se o vector (no caso, `[10]`) possui uma "cauda", ou seja, mais elementos
+além do primeiro. Usando `rest`, temos o resultado incorreto, pois `(rest [10])` retorna `[]`, que é logicamente verdadeiro.
+Quando usamos `next`, temos o resultado correto, pois `(next [10])` retorna `nil`, que é logicamente falso.
+
+Na prática, `(next v)` se comporta como `(seq (rest v))`.
+Esse parece um exemplo bastante inventado, mas na verdade este é um padrão relativamente comum em funções recursivas.
+
+Por fim, falemos da função `contains?` em vectors. TL;DR: não use a função `contains?` com vectors.
+
+Por que? Essa função verifica se um certo dado é uma _chave_ em uma collection associativa. Como vimos, vectors se comportam
+como collections associativas de índices (chaves) para elementos (valores). No caso de vectors,
+essa função verifica se o dado é um índice do vector, o que raramente é o que queremos.
+
+Ok, então como verificar se um dado está no vector? Use a função `some`! A função `some` recebe um predicado
+e uma collection. Ela retorna o primeiro valor logicamente positivo que encontrar ao aplicar o predicado
+nos elementos da collection (em ordem) ou `nil`:
+
+```clojure
+(some #(= % 20) v) ;;=> true
+
+(some #(= % 2000) v) ;;=> nil
+```
+
+Além dessas, todas as funções que já vimos que atuam sobre collections como `map`, `reduce` e `filter` funcionam
+com vectors da forma esperada.
+
+Com isso, terminamos de ver os vectors e algumas das suas principais funções. Tenha em mente que muitas dessas
+funções são mais gerais do que apenas para vectors. Elas podem ser aplicadas em basicamente qualquer coleção
+que seja uma sequência. Veremos mais sobre isso adiante.

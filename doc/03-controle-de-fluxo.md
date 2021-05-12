@@ -6,7 +6,7 @@ veremos nesta seção são do tipo condicional.
 
 Controles de loop são menos necessários em linguagens como Clojure, onde outros
 mecanismos mais interessantes e idiomáticos estão disponíveis. Clojure oferece
-boas abstrações de coleções e uma vasta gama de funções que atuam sobre elas,
+boas abstrações de collections e uma vasta gama de funções que atuam sobre elas,
 o que reduz a necessidade de estruturas como `for` e `while`, tão presentes em
 outras linguagens, para próxima de zero. Para além disso, recursão e algumas outras
 estruturas de iteração cobrem o restante das necessidades.
@@ -144,7 +144,7 @@ isso traz a vantagem de poder comparar inúmeros valores de uma só vez:
 ```
 
 (Você pode pular as próximas sentenças, se quiser). Há uma forma elegante em Clojure
-de verificar se uma dada coleção está ordenada (por exemplo, em ordem crescente)
+de verificar se uma dada collection está ordenada (por exemplo, em ordem crescente)
 usando `apply` e um comparador:
 
 ```clojure
@@ -156,7 +156,7 @@ usando `apply` e um comparador:
 ```
 
 A função `apply` simplesmente invoca a função passada como seu primeiro argumento
-(no caso dos exemplos `<`) passando cada um dos elementos da coleção como argumentos
+(no caso dos exemplos `<`) passando cada um dos elementos da collection como argumentos
 individuais dessa função. Isso é melhor explicado com um exemplo simples:
 
 ```clojure

@@ -39,7 +39,7 @@ Vamos conhecer as principais funções relativas a vectors na ordem CRUD (Create
 Para todos os exemplos a seguir, usaremos os seguintes dados:
 
 ```clojure
-(def v [10 20 30])
+(def v [10 20 30 40])
 
 (def v-nil nil)
 
@@ -154,6 +154,14 @@ v ;;=> [10 20 30 40]
 
 Note no exemplo acima como o retorno do `conj` é um novo vetor com as modificações desejadas. No entanto, o vector
 original, no caso `v`, não foi alterado. Isso também vale para qualquer uma dos casos a seguir.
+
+Uma função similar é `cons`:
+
+```clojure
+(cons 0 v) ;;=> (0 10 20 30 40)
+```
+
+A função `cons` sempre adiciona o novo elemento no começo da collection e retorna uma nova sequência.
 
 Uma outra função bastante útil é `assoc`:
 
@@ -299,6 +307,32 @@ Quando usamos `next`, temos o resultado correto, pois `(next [10])` retorna `nil
 Na prática, `(next v)` se comporta como `(seq (rest v))`.
 Esse parece um exemplo bastante inventado, mas na verdade este é um padrão relativamente comum em funções recursivas.
 
+O contrário da função `rest`/`next` é dado pela função `butlast`:
+
+```clojure
+(butlast v) ;;=> (10 20 30)
+```
+
+Essa função retorna toda collection, exceto o último elemento. Se a collection estiver vazia ou com apenas um elemento,
+`butlast` retorna `nil`.
+
+Também existem funções específicas para acessar o primeiro ou segundo elemento de um vector com
+as funções `first` e `second`, respectivamente:
+
+```clojure
+(first v) ;;=> 10
+
+(second v) ;;=> 20
+```
+
+Para acessar o último elemento, contamos com a função `last`:
+
+```clojure
+(last v) ;;=> 40
+```
+
+Todas essas três funções retornam `nil` caso não haja o elemento solicitado.
+
 Por fim, falemos da função `contains?` em vectors. TL;DR: não use a função `contains?` com vectors.
 
 Por que? Essa função verifica se um certo dado é uma _chave_ em uma collection associativa. Como vimos, vectors se comportam
@@ -316,8 +350,77 @@ nos elementos da collection (em ordem) ou `nil`:
 ```
 
 Além dessas, todas as funções que já vimos que atuam sobre collections como `map`, `reduce` e `filter` funcionam
-com vectors da forma esperada.
+com vectors da forma esperada. Fique atento que elas geralmente não retornam um vector, mas sim uma sequence
+(que veremos mais adiante).
 
 Com isso, terminamos de ver os vectors e algumas das suas principais funções. Tenha em mente que muitas dessas
 funções são mais gerais do que apenas para vectors. Elas podem ser aplicadas em basicamente qualquer coleção
 que seja uma sequência. Veremos mais sobre isso adiante.
+
+### Lists
+
+Lists (listas) são estruturas de dados sequências, ordenadas, não homogêneas, assim como os vectors. Uma das grandes
+diferenças para os vectors é a sua implementação e as consequências que isso traz.
+
+Ao contrário dos vectors, onde as operações são mais performáticas na ponta direita (final), nas lists as operações
+são mais performáticas na ponta esquerda (início). Isso porque lists são implementadas como linked lists (listas encadeadas).
+Se você tiver feito um curso sobre estruturas de dados, talvez lembre que linked lists mantêm uma referência (geralmente
+chamada _head_) para o início da lista.
+
+Uma consequência disso, é que acessar elementos de forma indexada não é tão performático assim, pois a list deve ser
+percorrida sequencialmente, a partir do seu primeiro elemento. Outra consequência disso é que adicionar ou remover do
+final da list também exige que toda list seja percorrida. Por esses motivos, algumas funções, quando aplicadas a lists,
+realizam suas operações sobre o primeiro elemento.
+
+Novamente, vamos ver as principais funções que atuam sobre lists na ordem CRUD.
+
+### Construindo lists
+
+Lists podem ser criadas de forma literal com `'()`. Note o uso de uma aspa simples (também chamado quote). O quote
+em Clojure tem a função de impedir que aquilo que o segue seja avaliado. Repare a diferença:
+
+```clojure
+(1 2 3)
+;;! Execution error (ClassCastException) at nsclojure.core/eval1545 (form-init1572038123679197018.clj:1).
+;;! class java.lang.Long cannot be cast to class clojure.lang.IFn (java.lang.Long is in module java.base of loader 'bootstrap'; clojure.lang.IFn is in unnamed module of loader 'app')
+
+'(1 2 3)
+;;=> (1 2 3)
+
+(quote (1 2 3))
+;;=> (1 2 3)
+```
+
+No primeiro exemplo, a expressão `(1 2 3)` foi avaliada como esperado e o `1` foi interpretado como uma função, por estar
+na primeira posição da expressão, enquanto `2` e `3` são seus parâmetros. Obviamente, `1` não é uma função válida e portanto
+vemos a exceção sendo lançada. No segundo exemplo, impedimos que a expressão `(1 2 3)` seja avaliada, adicionando o quote
+na sua frente. O terceiro exemplo mostra que a aspa simples é apenas um syntatic sugar da função `quote`.
+O uso do quote é necessário sempre que formos criar uma list dessa forma.
+
+Outra forma de criar lists é com a função `list`:
+
+```clojure
+(list 1 2 3) ;;=> (1 2 3)
+```
+
+### Acessando lists
+
+Como esperado, muitas das funções que atuam sobre collections (e vectors em especial) também atuam sobre lists. Por exemplo,
+`nth`, `first`, `second`, `last`, `rest`, `next`, `butlast` etc todas atuam sobre lists com a mesma semântica.
+
+### Modificando lists
+
+Assim como com vectors, lists não são realmente modificadas, mas sim retornada uma nova list com as modificações feitas
+sobre a list original. Muitas das funções que vimos para vectors também vão funcionar para lists. Uma delas merece
+atenção.
+
+A função `conj`, quando aplicada sobre uma list, adiciona o novo elemento no começo da list (ao contrário de quando
+aplicada sobre um vector, que adiciona o novo elemento no final):
+
+```clojure
+;; List!
+(conj '(10 20 30 40) :new-element) ;;=> (:new-element 10 20 30 40)
+
+;; Vector!
+(conj [10 20 30 40] :new-element) ;;=> [10 20 30 40 :new-element]
+```

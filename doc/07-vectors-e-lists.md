@@ -451,4 +451,5 @@ possuem uma variedade de funções disponíveis para criar, acessar, modificar e
 com a filosofia de ter poucas estruturas, mas muitas funções para manipulá-las.
 
 Como percebemos, muitas dessas funções são comuns entre vectors e lists, e isso não é por acaso.
-A seguir veremos a abstração que unifica estruturas sequenciais, a _sequence_.
+Mais adiante, veremos a abstração que unifica estruturas sequenciais, a _sequence_. A seguir, veremos
+uma das estruturas de dados mais utilizadas em Clojure, o map.

@@ -66,7 +66,7 @@ Exemplos:
 05. [Funções](doc/05-funcoes.md)
 06. [Estruturas de dados](doc/06-estruturas-de-dados.md)
 07. [Vectors e lists](doc/07-vectors-e-lists.md)
-08. Maps
+08. [Maps](doc/08-maps.md)
 09. Sequences
 10. Records
 11. Multimethods

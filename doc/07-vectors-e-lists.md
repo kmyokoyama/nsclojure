@@ -372,7 +372,8 @@ percorrida sequencialmente, a partir do seu primeiro elemento. Outra consequênc
 final da list também exige que toda list seja percorrida. Por esses motivos, algumas funções, quando aplicadas a lists,
 realizam suas operações sobre o primeiro elemento.
 
-Novamente, vamos ver as principais funções que atuam sobre lists na ordem CRUD.
+Novamente, vamos ver as principais funções que atuam sobre lists na ordem CRUD. Isso será um pouco mais curto, pois
+várias das funções que já vimos também funcionam para lists.
 
 ### Construindo lists
 
@@ -418,9 +419,36 @@ A função `conj`, quando aplicada sobre uma list, adiciona o novo elemento no c
 aplicada sobre um vector, que adiciona o novo elemento no final):
 
 ```clojure
-;; List!
+;; List.
 (conj '(10 20 30 40) :new-element) ;;=> (:new-element 10 20 30 40)
 
-;; Vector!
+;; Vector.
 (conj [10 20 30 40] :new-element) ;;=> [10 20 30 40 :new-element]
 ```
+
+Por outro lado, a função `cons`, como dito, sempre adiciona o elemento no começo da collection e retorna uma nova
+sequência:
+
+```clojure
+(cons 0 '(10 20 30 40)) ;;=> (0 10 20 30 40)
+```
+
+### Removendo elementos
+
+Assim como a função `conj` adiciona elementos no começo da list (enquanto adiciona no final para vectors), a função
+`pop` remove elementos do começo da list (enquanto remove elementos do final de vectors):
+
+```clojure
+(pop '(10 20 30 40)) ;;=> (20 30 40)
+```
+
+Remover elementos de uma list, assim como para vectors, não é uma tarefa tão comum.
+
+## Conclusão
+
+Nesta seção, vimos as duas principais estruturas sequenciais (e ordenadas), em Clojure: vectors e lists. Ambas estruturas
+possuem uma variedade de funções disponíveis para criar, acessar, modificar e remover elementos. Isso está alinhado
+com a filosofia de ter poucas estruturas, mas muitas funções para manipulá-las.
+
+Como percebemos, muitas dessas funções são comuns entre vectors e lists, e isso não é por acaso.
+A seguir veremos a abstração que unifica estruturas sequenciais, a _sequence_.

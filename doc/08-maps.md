@@ -1,4 +1,8 @@
-# Maps
+# Sets e maps
+
+## Sets
+
+## Maps
 
 Nesta seção, veremos uma das estruturas de dados mais utilizadas do Clojure, o map. O map é um mapa associativo
 presente em diversas outras linguagens de programação sob vários nomes, dict, hash, table, associative arrays etc.
@@ -10,7 +14,7 @@ fazer isso), não há nenhuma garantia que será retornado o primeiro par chave/
 
 Para apresentar o map, também vamos seguir a ordem CRUD.
 
-## Construindo maps
+### Construindo maps
 
 Um map literal pode ser construído com `{,,,}`, onde chaves e valores são separados por um espaço em branco. Veja um exemplo:
 
@@ -81,7 +85,7 @@ nos permite tratar dos casos de empate. Note como Mary e Alice possuem a mesma i
 Alice veio na frente de Mary. Se desejar uma ordem decrescente com `compare`, simplesmente inverta `key1` e `key2`
 de lugar.
 
-## Acessando maps
+### Acessando maps
 
 Existem várias formas de acessar os elementos de maps. Para todos os exemplos a seguir, usaremos o seguinte map:
 
@@ -124,3 +128,163 @@ portanto não corremos o risco de receber `NullPointerException`. Por outro lado
 ;;! xecution error (NullPointerException) at nsclojure.core/eval1639 (form-init12030100162938325497.clj:1).
 ;;! Cannot invoke "clojure.lang.IFn.invoke(Object)" because the return value of "clojure.lang.Var.getRawRoot()" is null
 ```
+
+Uma forma idiomática de acessar elementos de maps aninhados é com `->` e keywords:
+
+```clojure
+(-> jane :job :company :name) ;;=> "Not an Evil Corp
+
+;; Equivalent to
+(:name (:company (:job jane))) ;;=> "Not an Evil Corp"
+```
+
+Para acessar elementos de um map, também podemos utilizar a função `get` e sua versão para maps aninhados `get-in`:
+
+```clojure
+(get jane :name) ;;=> "Jane"
+
+(get jane :hobbies) ;;=> nil
+
+(get jane :hobbies #{}) ;;=> #{}
+
+(get john :name) ;;=> nil
+```
+
+Como dá para perceber, o comportamento dessa função é bastante parecido com o obtido usando keywords. A versão aninhada,
+`get-in` é análoga:
+
+```clojure
+(get-in jane [:job :company :name]) ;;=> "Not an Evil Corp"
+```
+
+Por fim, existem duas formas bastante úteis para acessar múltiploes elementos de um map. A primeira forma é com a função
+`select-keys`, que retorna um "submap" do map original:
+
+```clojure
+(select-keys jane [:name :age]) ;;=> {:name "Jane", :age 22}
+```
+
+A segunda forma é um pouco mais complicada, mas ainda assim muito útil (e versátil). Ela utiliza a função `juxt`.
+A função `juxt` aceita como argumentos várias funções e retorna uma única função (higher-order function das melhores!),
+que retorna um vector da aplicação daquelas funções. Confuso, não? Vamos ver um exemplo:
+
+```clojure
+(defn square [x] (* x x))
+
+(defn cube [x] (* x x x))
+
+(def powers (juxt square cube))
+
+(powers 5) ;;=> [25 125]
+```
+
+Agora, podemos combinar o poder de `juxt` com keywords atuando como funções:
+
+```clojure
+((juxt :name :age) jane) ;;=> ["Jane" 22]
+
+((juxt :name (fn [p] (-> p :age inc))) jane) ;;=> ["Jane" 23]
+```
+
+O segundo exemplo acima ilustra como podemos usar `juxt` para acessar e manipular múltiplos campos do mesmo map. De fato,
+`juxt` é bastante versátil e poderoso, e usá-lo com maps é apenas uma das possibilidades. Vale a pena saber aplicá-lo
+
+### Modificando maps
+
+Como toda boa estrutura persistente em Clojure, modificar um map não modifica realmente o map original. Em vez disso,
+um novo map, baseado no map original com as modificações efetuadas, é retornado.
+
+Duas das funções mais usuais para modificar maps são a `assoc` (e `assoc-in`). A função `assoc` permite associar um novo
+valor a uma chave. Se a chave não existir, ela será criada e associada com aquele valor:
+
+```clojure
+(assoc jane :hobbies #{"reading" "running"})
+;;=> {:name "Jane",
+;;=>  :age 22,
+;;=>  :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"},
+;;=>  :hobbies #{"running" "reading"}}
+
+;; It is Jane's birthday!
+(assoc jane :age 23) ;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+
+(assoc-in jane [:job :company :name] "A Good Corp") ;;=> {:name "Jane", :age 22, :job {:company {:name "A Good Corp", :sector "Software"}, :role "Software Engineer"}}
+```
+
+> Vale reforçar: o map original `jane` não sofreu nenhuma alteração! Novos maps foram criados a partir das modificações
+> acima. Se manter essas modificações for importante, utilize `let`, `def` etc. para dar um nome aos novos maps.
+
+Às vezes, o novo valor é derivado do valor atual, utilizando alguma função. Por exemplo, no caso do aniversário da Jane,
+queremos incrementar a sua idade em 1. Isso pode ser obtido com a função `update` (e sua versão aninhada `update-in`):
+
+```clojure
+(update jane :age inc) ;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+```
+
+Obviamente, este exemplo foi o simples caso de passar `inc`, mas a função `update` aceita uma função tão complexa quanto
+se queira.
+
+A sua versão aninhada, `update-in` é análoga:
+
+```clojure
+(update-in jane [:job :company] (fn [old-company]
+                                    (if (= "Software" (:sector old-company))
+                                      (assoc old-company :name "Maybe an Evil Corp")
+                                      old-company)))
+;;=> {:name "Jane", :age 22, :job {:company {:name "Maybe an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+```
+
+As funções `update`/`update-in` aceitam argumentos extras que são passados para a função de atualização. Veja um exemplo:
+
+```clojure
+(update jane :age - 1) ;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+
+(update jane :age (fn [old-age] (- old-age 1))) ;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+```
+
+Note que o valor a ser atualizado (no exemplo, `old-age`) é passado como primeiro argumento da função de atualização,
+enquanto os argumentos extras (no exemplo, `1`) são passados como segundo, terceiro, etc.
+
+### Removendo elementos
+
+Às vezes, é necessário remover uma chave (e seu respectivo valor) de um map. Para isso, contamos com a função `dissoc`:
+
+```clojure
+(dissoc jane :age) ;;=> {:name "Jane", :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+```
+
+Infelizmente, não existe uma função `dissoc-in`, mas sua funcionalidade pode ser facilmente alcançada com `update`/`update-in` e `dissoc`:
+
+```clojure
+(update-in jane [:job :company] dissoc :sector) ;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
+```
+
+Note que o argumento extra, `:sector`, é passado como segundo argumento para a função `dissoc`. O exemplo acima
+é equivalente ao seguinte:
+
+```clojure
+(update-in jane [:job :company] (fn [company] (dissoc company :sector))) ;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
+```
+
+### Outras funções úteis
+
+Outras três funções que podem ser úteis são `keys`, `vals` e `zipmap`. Elas podem ser combinadas para criar outras funções
+ainda mais interessantes.
+
+A função `keys` simplesmente retorna uma sequência com as chaves de um map, enquanto a função `vals` retorna uma sequência
+com os valores de um map:
+
+```clojure
+(keys jane) ;;=> (:name :age :job)
+
+(vals jane) ;;=> ("Jane" 22 {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"})
+```
+
+A função `zipmap` recebe duas collections e retorna uma map onde as chaves vêm da primeira collection e os valores
+vêm da segunda collection:
+
+```clojure
+(zipmap [:name :age :hobbies] ["Jane" 22]) ;;=> {:name "Jane", :age 22}
+```
+
+Note no exemplo acima que a collection de valores é mais curta que a collection de chaves. Isso fez com que a chave
+`:hobbies` ficasse sem valor correspondente e, por isso, não fosse incluída no map final.

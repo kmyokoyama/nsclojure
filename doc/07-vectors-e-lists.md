@@ -137,7 +137,7 @@ Se você leu a seção anterior, provavelmente está se pergunta "Mas não é tu
 E a resposta é "Sim!". Tudo continua imutável. Na verdade, não estaremos modificando
 a estrutura original, mas sim criando uma nova estrutura com as modificação a partir da original.
 
-Temos algumas formas de modificar elementos em vectors. A primeira delas é com `conj`:
+Temos algumas formas de modificar elementos em vectors. A primeira delas é com `conj` (o nome vem de _conjoin_):
 
 ```clojure
 (conj v 50) ;;=> [10 20 30 40 50]
@@ -155,7 +155,7 @@ v ;;=> [10 20 30 40]
 Note no exemplo acima como o retorno do `conj` é um novo vetor com as modificações desejadas. No entanto, o vector
 original, no caso `v`, não foi alterado. Isso também vale para qualquer uma dos casos a seguir.
 
-Uma função similar é `cons`:
+Uma função similar é `cons` (o nome vem de _construct_):
 
 ```clojure
 (cons 0 v) ;;=> (0 10 20 30 40)

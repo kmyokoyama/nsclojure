@@ -57,8 +57,70 @@ Se for preciso criar um map que preserve a ordem dos seus pares de chave/valor, 
 ```
 
 Note como a ordem no map criado é por comparação das chaves (`:a` < `:b`) e não dos valores ou ordem de inserção. Para
-mais flexibilidade sobre a ordenação, podemos usar a função `sorted-map-by`:
+mais flexibilidade sobre a ordenação, podemos usar a função `sorted-map-by`. Essa função recebe um comparador e os
+pares de chave/valor e retorna um map ordenado como um `clojure.lang.PersistentTreeMap`:
 
 ```clojure
+(def people {100 {:name "John" :age 20}
+             80  {:name "Mary" :age 22}
+             200 {:name "Alice" :age 22}
+             60  {:name "Bob" :age 18}})
 
+(into (sorted-map-by
+        (fn [key1 key2] (compare [(:age (get people key1)) (:name (get people key1))]
+                                 [(:age (get people key2)) (:name (get people key2))])))
+      people)
+;;=> {60 {:name "Bob", :age 18}, 100 {:name "John", :age 20}, 200 {:name "Alice", :age 22}, 80 {:name "Mary", :age 22}}
+```
+
+No exemplo acima, `people` é um map, não ordenado, onde as chaves são id e os valores são maps representando pessoas
+(com nome e idade), e queremos um map com a mesma estrutura, mas ordenado pela idade e, em caso de empate, pelo nome.
+Para isso, utilizamos a função `sorted-map-by` com uma função que usa `compare` para comparar elementos dois a dois.
+Nesse caso, comparamos vetores, onde o primeiro elemento é a idade e o segundo elemento é o nome. Comparar vetores assim
+nos permite tratar dos casos de empate. Note como Mary e Alice possuem a mesma idade, mas pelo critério de desempate,
+Alice veio na frente de Mary. Se desejar uma ordem decrescente com `compare`, simplesmente inverta `key1` e `key2`
+de lugar.
+
+## Acessando maps
+
+Existem várias formas de acessar os elementos de maps. Para todos os exemplos a seguir, usaremos o seguinte map:
+
+```clojure
+(def jane {:name "Jane"
+           :age  22
+           :job  {:company {:name "Not an Evil Corp"
+                            :sector "Software"}
+                  :role "Software Engineer"}})
+```
+
+Uma das principais formas de acessar um map é aproveitando-se do fato de que maps respondem à interface de funções
+(`clojure.lang.IFn`)
+
+```clojure
+(jane :name) ;;=> "Jane"
+```
+
+Melhor ainda, keywords também podem se comportar como funções:
+
+```clojure
+(:name jane) ;;=> "Jane"
+
+(:hobbies jane) ;;=> nil
+
+(:hobbies jane #{}) ;;=> #{}
+```
+
+No exemplo acima, usamos `:name` como função para acessar esta chave do map passado como argumento (`jane`). Se tentarmos
+acessar uma chave que não existe (como `:hobbies`), o valor retornado será `nil`. Podemos também passar um segundo argumento
+que é o valor default a ser retornado caso a chave não exista (o set vazio `#{}` é retornado, pois `:hobbie` não é uma chave existente).
+
+Esta última forma (usando keywords como função) tem uma vantagem sobre a primeira: keywords literais nunca são `nil`,
+portanto não corremos o risco de receber `NullPointerException`. Por outro lado, maps podem ser `nil` e esse risco é real:
+
+```clojure
+(def john nil)
+
+(john :name)
+;;! xecution error (NullPointerException) at nsclojure.core/eval1639 (form-init12030100162938325497.clj:1).
+;;! Cannot invoke "clojure.lang.IFn.invoke(Object)" because the return value of "clojure.lang.Var.getRawRoot()" is null
 ```

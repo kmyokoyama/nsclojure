@@ -205,9 +205,11 @@ valor a uma chave. Se a chave não existir, ela será criada e associada com aqu
 ;;=>  :hobbies #{"running" "reading"}}
 
 ;; It is Jane's birthday!
-(assoc jane :age 23) ;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+(assoc jane :age 23)
+;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
 
-(assoc-in jane [:job :company :name] "A Good Corp") ;;=> {:name "Jane", :age 22, :job {:company {:name "A Good Corp", :sector "Software"}, :role "Software Engineer"}}
+(assoc-in jane [:job :company :name] "A Good Corp")
+;;=> {:name "Jane", :age 22, :job {:company {:name "A Good Corp", :sector "Software"}, :role "Software Engineer"}}
 ```
 
 > Vale reforçar: o map original `jane` não sofreu nenhuma alteração! Novos maps foram criados a partir das modificações
@@ -217,7 +219,8 @@ valor a uma chave. Se a chave não existir, ela será criada e associada com aqu
 queremos incrementar a sua idade em 1. Isso pode ser obtido com a função `update` (e sua versão aninhada `update-in`):
 
 ```clojure
-(update jane :age inc) ;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+(update jane :age inc)
+;;=> {:name "Jane", :age 23, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
 ```
 
 Obviamente, este exemplo foi o simples caso de passar `inc`, mas a função `update` aceita uma função tão complexa quanto
@@ -236,9 +239,11 @@ A sua versão aninhada, `update-in` é análoga:
 As funções `update`/`update-in` aceitam argumentos extras que são passados para a função de atualização. Veja um exemplo:
 
 ```clojure
-(update jane :age - 1) ;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+(update jane :age - 1)
+;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
 
-(update jane :age (fn [old-age] (- old-age 1))) ;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+(update jane :age (fn [old-age] (- old-age 1)))
+;;=> {:name "Jane", :age 21, :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
 ```
 
 Note que o valor a ser atualizado (no exemplo, `old-age`) é passado como primeiro argumento da função de atualização,
@@ -249,20 +254,23 @@ enquanto os argumentos extras (no exemplo, `1`) são passados como segundo, terc
 Às vezes, é necessário remover uma chave (e seu respectivo valor) de um map. Para isso, contamos com a função `dissoc`:
 
 ```clojure
-(dissoc jane :age) ;;=> {:name "Jane", :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
+(dissoc jane :age)
+;;=> {:name "Jane", :job {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"}}
 ```
 
 Infelizmente, não existe uma função `dissoc-in`, mas sua funcionalidade pode ser facilmente alcançada com `update`/`update-in` e `dissoc`:
 
 ```clojure
-(update-in jane [:job :company] dissoc :sector) ;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
+(update-in jane [:job :company] dissoc :sector)
+;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
 ```
 
 Note que o argumento extra, `:sector`, é passado como segundo argumento para a função `dissoc`. O exemplo acima
 é equivalente ao seguinte:
 
 ```clojure
-(update-in jane [:job :company] (fn [company] (dissoc company :sector))) ;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
+(update-in jane [:job :company] (fn [company] (dissoc company :sector)))
+;;=> {:name "Jane", :age 22, :job {:company {:name "Not an Evil Corp"}, :role "Software Engineer"}}
 ```
 
 ### Outras funções úteis
@@ -274,9 +282,11 @@ A função `keys` simplesmente retorna uma sequência com as chaves de um map, e
 com os valores de um map:
 
 ```clojure
-(keys jane) ;;=> (:name :age :job)
+(keys jane)
+;;=> (:name :age :job)
 
-(vals jane) ;;=> ("Jane" 22 {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"})
+(vals jane)
+;;=> ("Jane" 22 {:company {:name "Not an Evil Corp", :sector "Software"}, :role "Software Engineer"})
 ```
 
 A função `zipmap` recebe duas collections e retorna uma map onde as chaves vêm da primeira collection e os valores

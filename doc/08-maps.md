@@ -298,3 +298,12 @@ vêm da segunda collection:
 
 Note no exemplo acima que a collection de valores é mais curta que a collection de chaves. Isso fez com que a chave
 `:hobbies` ficasse sem valor correspondente e, por isso, não fosse incluída no map final.
+
+Outra função útil é a `merge`. Essa função faz a união de maps:
+
+```clojure
+(merge {10 "John"} {12 "Jane"} {10 "Mary"} {8 "Bob"}) ;;=> {10 "Mary", 12 "Jane", 8 "Bob"}
+```
+
+No exemplo acima, note como a chave `10` se repete no primeiro e terceiro maps. A função `merge` mantém a última
+ocorrência (da esquerda para a direita) da chave.

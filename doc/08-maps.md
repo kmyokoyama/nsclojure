@@ -2,6 +2,97 @@
 
 ## Sets
 
+Sets (conjuntos) são estruturas muito úteis, mas sub-utilizadas em praticamente qualquer linguagem de programação.
+Sets se destacam por duas características:
+
+1. São não ordenados;
+2. Não possuem elementos duplicados.
+
+### Construindo sets
+
+Sets literais podem ser criados com `#{,,,}`:
+
+```clojure
+#{1 2 3 4} ;;=> #{1 4 3 2}
+
+#{1 2 3 4 3}
+;;! Syntax error reading source at (REPL:1:13).
+;;! Duplicate key: 3
+```
+
+No exemplo acima, repare duas coisas. Primeiro, apesar de termos especificado os elementos na aparente ordem `1 2 3 4`,
+note como o set foi retornado como `1 4 3 2`. Na verdade, ele não possui garantia de ordem alguma. O que vemos é apenas
+uma ordem aleatória. Segundo, ao tentarmos criar um set com elementos repetidos (no caso, o 3), uma exceção é lançada.
+
+Para criar um set com possíveis valores duplicados, podemos usar a função `hash-set`. Essa função remove qualquer elemento
+duplicado e cria o set como se fosse utilizada `#{,,,}` sem elementos duplicados:
+
+```clojure
+(hash-set 1 2 3 4 3) ;;=> #{1 4 3 2}
+
+(= #{1 2 3 4} (hash-set 1 2 3 4 3)) ;;=> true
+```
+
+Se tiver uma collection com possíveis elementos duplicados e quiser criar um set, pode utilizar a função `set`:
+
+```clojure
+(set [1 2 3 4 3]) ;;=> #{1 4 3 2}
+```
+
+Essa é uma técnica bastante prática para remover elementos duplicados de collections (cuidado: a ordem não é preservada):
+
+```clojure
+(-> [1 2 3 4 3 2 4]
+    set
+    vec)
+;;=> [1 4 3 2]
+```
+
+### Verificando pertinência
+
+A operação mais comum entre elementos e set é verificar a pertinência (_membership_) do elemento no set, i.e., verificar
+se um elemento estã ou não no set. Em Clojure, podemos usar o próprio set como função para isso:
+
+```clojure
+(#{1 2 3 4} 4) ;;=> 4
+
+(#{1 2 3 4} 5) ;;=> nil
+```
+
+No primeiro exemplo, queremos verificar se o valor 4 é um elemento no set. Como 4 é um elemento pertencente a esse
+set, 4 é retornado. No segundo exemplo, repetimos para verificar se 5 é um elemento, mas como não o é, `nil` é retornado.
+
+Quando falamos de verificar pertinência de elementos em collections, falamos da função `some`. Podemos unir as duas coisas
+(`some` e sets como funções) para chegarmos à forma idiomática de verificar a pertinência de elementos em collections:
+
+```clojure
+(some #{4} [1 2 3 4]) ;;=> 4
+
+(some #{5} [1 2 3 4]) ;;=> nil
+```
+
+### Operações sobre sets
+
+As operações fundamentais sobre sets em Clojure encontra-se na lib `clojure.set`. Veja alguns exemplos:
+
+```clojure
+(def s1 #{1 2 3 4 5})
+(def s2 #{4 5 6 7 8 })
+(def s3 #{1 2 3})
+
+(clojure.set/union s1 s2) ;;=> #{7 1 4 6 3 2 5 8}
+
+(clojure.set/intersection s1 s2) ;;=> #{4 5}
+
+(clojure.set/difference s1 s2) ;;=> #{1 3 2}
+
+(clojure.set/difference s2 s1) ;;=> #{7 6 8}
+
+(clojure.set/subset? s3 s1) ;;=> true
+
+(clojure.set/superset? s1 s3) ;;=> true
+```
+
 ## Maps
 
 Nesta seção, veremos uma das estruturas de dados mais utilizadas do Clojure, o map. O map é um mapa associativo
@@ -307,3 +398,13 @@ Outra função útil é a `merge`. Essa função faz a união de maps:
 
 No exemplo acima, note como a chave `10` se repete no primeiro e terceiro maps. A função `merge` mantém a última
 ocorrência (da esquerda para a direita) da chave.
+
+## Conclusão
+
+Esta seção apresentou duas estruturas de dados bastante úteis: sets e maps. Sets são conjuntos não ordenados e que não
+permitem elementos duplicados. Maps são os famosos dicionários (ou hashes) que mapeiam pares de chave/valor. Muitas vezes,
+uma dessas duas estruturas é exatamente a peça que precisamos para resolver elaborar um algoritmo ou resolver um determinado
+problema de forma elegante. É bom conhecê-las e saber utilizá-las bem.
+
+A seguir veremos a abstração que unifica sequências em Clojure, a _sequence_. Com isso, estaremos um passo mais próximo
+de cobrir todas estruturas de dados que fazem parte do cotidiano da programação em Clojure.

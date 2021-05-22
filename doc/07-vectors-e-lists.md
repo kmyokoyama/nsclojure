@@ -236,8 +236,25 @@ Com `subvec` e `concat` podemos realizar a remoção de um elemento em um determ
 
 ### Outras funções úteis
 
-Vale conhecer o que outras funções fazem (e não fazem) com vectors. Por exemplo, a função `count` retorna
-a quantidade de elementos em um vector:
+Vale conhecer o que outras funções fazem (e não fazem) com vectors.
+
+A primeira função bastante útil é a `into`. Na verdade, `into` não é exclusiva de vectors e funciona com praticamente
+todas estruturas compostas que veremos. Essa função une duas collections, fazendo `conj` dos elementos da segunda collection
+na primeira. Veja um exemplo:
+
+```clojure
+(into [1 2] [3 4]) ;;=> [1 2 3 4]
+
+(into [] (range 1 5)) ;;=> [1 2 3 4]
+```
+
+O segundo exemplo, com o vector vazio, é um idioma comum em Clojure. Como `into` mantém a estrutura da primeira collection
+passada como argumento, é comum usar uma estrutura vazia do tipo de destino que desejamos. Para ilustrar isso,
+no exemplo a seguir usa `into` para transformar a saída da função `range` (uma sequence) em um vector:
+
+Como veremos, sets são estruturas sem ordem inerente, por isso o vector resultante também não está em ordem.
+
+Para descobrir a quantidade de elementos em um vector, use a função `count`:
 
 ```clojure
 (count []) ;;=> 0
@@ -340,7 +357,7 @@ como collections associativas de índices (chaves) para elementos (valores). No 
 essa função verifica se o dado é um índice do vector, o que raramente é o que queremos.
 
 Ok, então como verificar se um dado está no vector? Use a função `some`! A função `some` recebe um predicado
-e uma collection. Ela retorna o primeiro valor logicamente positivo que encontrar ao aplicar o predicado
+e uma collection. Ela retorna o primeiro valor logicamente verdadeiro que encontrar ao aplicar o predicado
 nos elementos da collection (em ordem) ou `nil`:
 
 ```clojure
@@ -451,5 +468,5 @@ possuem uma variedade de funções disponíveis para criar, acessar, modificar e
 com a filosofia de ter poucas estruturas, mas muitas funções para manipulá-las.
 
 Como percebemos, muitas dessas funções são comuns entre vectors e lists, e isso não é por acaso.
-Mais adiante, veremos a abstração que unifica estruturas sequenciais, a _sequence_. A seguir, veremos
-uma das estruturas de dados mais utilizadas em Clojure, o map.
+Mais adiante, veremos a abstração que unifica estruturas sequenciais, a _sequence_. A seguir, veremos uma estrutura de
+dados bastante útil em diversos cenários, o _set_, e uma das estruturas de dados mais utilizadas do Clojure, o _map_.

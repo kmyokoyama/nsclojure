@@ -113,7 +113,7 @@ sequence, possivelmente infinita, de um mesmo valor e a função `take` retorna 
 (take 10 (repeat "na")) ;;=> ("na" "na" "na" "na" "na" "na" "na" "na" "na" "na")
 ```
 
-> Cuidado ao avaliar expressões que envolvem sequences infinitas no REPL
+> **Cuidado ao avaliar expressões que envolvem sequences infinitas no REPL**
 > 
 > Lembre-se que para mostrar na saída do REPL, é preciso computar os elementos da sequence. Isso significa que
 > tentar avaliar expressões que retornam sequences infinitas, como `(repeat "na")`, no REPL pode causar um hang,
@@ -153,5 +153,9 @@ Veja mais um exemplo, onde queremos obter as próximas 5 potências de 2, começ
 ```
 
 Clojure provê muitas outras funções para se trabalhar com (lazy) sequences.
-O capítulo _Unifying Data with Sequences_ do livro Programming Clojure [1] é uma excelente fonte
+O capítulo _Unifying Data with Sequences_ do livro Programming Clojure [Miller2018] é uma excelente fonte
 sobre (lazy) sequences e suas aplicações em diversos cenários.
+
+## Referências
+
+* [Miller2018] Miller, Alex; Halloway, Stuart; Bedra, Aaron. Programming Clojure. 3a edição. The Pragmatic Programmers, 2018.

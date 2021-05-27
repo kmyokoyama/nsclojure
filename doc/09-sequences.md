@@ -71,4 +71,87 @@ Diversas estruturas de dados em Clojure são sequenciáveis, até mesmo aquelas 
 (seq #{1 2 3 4}) ;;=> (1 4 3 2)
 
 (seq {:name "John" :age 22}) ;;=> ([:name "John"] [:age 22])
+
+(-> (seq {:name "John" :age 22}) first) ;;=> [:name "John"]
+
+(-> (seq {:name "John" :age 22}) first type) ;;=> clojure.lang.MapEntry
 ```
+
+No segundo exemplo acima, vemos que podemos obter uma sequence a partir de um map. O último exemplo mostra que
+cada elemento dessa sequence é um `clojure.lang.MapEntry`, que é basicamente um vector de dois elementos: o primeiro
+elemento é a chave e o segundo elemento seu respectivo valor. O Clojure possui as funções `key` e `val` para acessar
+o primeiro e segundo elemento de um `MapEntry`, respectivamente:
+
+```clojure
+(-> (seq {:name "John" :age 22}) first key) ;;=> :name
+
+(-> (seq {:name "John" :age 22}) first val) ;;=> "John"
+```
+
+## Lazy sequences
+
+Uma coisa bastante interessante sobre sequences é a possibilidade de trabalhar com lazy sequences (também vou manter
+sem tradução). Basicamente, os elementos de uma lazy sequence não são avaliados até que seja estritamente necessário.
+Isso significa que a lazy sequence está mais para uma receita de como gerar os seus elementos do que para uma coleção
+completa em memória. À medida que os seus elementos vão se tornando necessários, eles vão sendo computados e retornados.
+
+Imagine-se trabalhando com um conjunto de dados realmente grande em disco, impraticável de manter em memória.
+Neste caso, poderia-se utilizar uma lazy sequence para trabalhar com elementos um a um ou em batches menores, que
+caibam em memória (obviamente, se todo conjunto se fizesse necessário ao mesmo tempo em memória para determinado cálculo, lazy sequences
+seriam de pouca ajuda).
+
+Outro caso interessante de lazy sequences é trabalhar com sequences infinitas. Sequences com um número infinito de elementos
+claramente não cabem em memória, mas se seus elementos são gerados e retornados um a um, então se trabalhar com sequences
+infinitas se torna totalmente praticável.
+
+Clojure possui diversas funções para se criar e manipular (lazy) sequences. Por exemplo, a função `repeat` gera uma lazy
+sequence, possivelmente infinita, de um mesmo valor e a função `take` retorna o `n` primeiros elementos da sequence:
+
+```clojure
+(repeat 5 "na") ;;=> ("na" "na" "na" "na" "na")
+
+(take 10 (repeat "na")) ;;=> ("na" "na" "na" "na" "na" "na" "na" "na" "na" "na")
+```
+
+> Cuidado ao avaliar expressões que envolvem sequences infinitas no REPL
+> 
+> Lembre-se que para mostrar na saída do REPL, é preciso computar os elementos da sequence. Isso significa que
+> tentar avaliar expressões que retornam sequences infinitas, como `(repeat "na")`, no REPL pode causar um hang,
+> que levará a ter que reiniciar o REPL.
+
+Em outra situação, podemos precisar dos 10 primeiros inteiros positivos que são múltiplos de 3 e terminam em 7 (tarefa
+bem cotidiana, certo?). Em Clojure, podemos simplesmente usar as funções `iterate` (com `inc`) e `filter` e `take`:
+
+```clojure
+(defn mult-3-ends-with-7?
+      [n]
+      (and (zero? (mod n 3))
+           (-> n str (clojure.string/ends-with? "7"))))
+
+(->> (iterate inc 1)
+     (filter mult-3-ends-with-7?)
+     (take 10))
+;;=> (27 57 87 117 147 177 207 237 267 297)
+
+;; Or...
+(->> (iterate #(+ % 3) 27)
+     (filter mult-3-ends-with-7?)
+     (take 10))
+;;=> (27 57 87 117 147 177 207 237 267 297)
+
+;; Or......
+(take 10 (iterate #(+ % 30) 27))
+;;=> (27 57 87 117 147 177 207 237 267 297)
+```
+
+A função `iterate` recebe uma função, `f`, e um valor inicial, `x`, e retorna a sequence resultante de aplicações sucessivas
+de `f` (i.e., `(x (-> x f) (-> x f f) (-> x f f f) ...)`. Note como valor inicial, `x`, é sempre o primeiro elemento da sequence).
+Veja mais um exemplo, onde queremos obter as próximas 5 potências de 2, começando por 1024:
+
+```clojure
+(take 5 (iterate #(* % 2) 1024)) ;;=> (1024 2048 4096 8192 16384)
+```
+
+Clojure provê muitas outras funções para se trabalhar com (lazy) sequences.
+O capítulo _Unifying Data with Sequences_ do livro Programming Clojure [1] é uma excelente fonte
+sobre (lazy) sequences e suas aplicações em diversos cenários.
